@@ -28,7 +28,7 @@ void help(std::ostream &out) {
 
 
 int main() {
-    CustomVector<Pentagon<int>> vec;
+    CustomVector<Pentagon<int>, CustomAllocator<Pentagon<int>, 2>> vec;
 
     typename Pentagon<int>::area_type area = 0;
     int cmd;
@@ -85,7 +85,7 @@ int main() {
                 std::cout << "Print an index of figure which should be deleted:" << std::endl;
                 int index;
                 std::cin >> index;
-                CustomVector<Pentagon<int>>::iterator it;
+                decltype(vec)::iterator it;
                 try {
                     it = std::next(vec.begin(), index);
                     vec.erase(it);

@@ -10,29 +10,7 @@
 #include "forward_vector_iterator.h"
 
 
-template<typename T, typename Allocator = std::allocator<T>>
-struct CustomVector;
-
-template <typename T, typename A>
-struct deleter_t{
-    using allocator_type = A;
-    using value_type = T;
-    deleter_t() : m_allocator(nullptr){}
-    explicit deleter_t(allocator_type* allocator){
-        m_allocator = allocator;
-    }
-    void operator()(CustomVector<value_type, allocator_type>* ptr) const{
-        if(ptr != nullptr){
-            std::allocator_traits<allocator_type>::destroy(*m_allocator, ptr);
-            m_allocator->deallocate(ptr, 1);
-        }
-    }
-
-    allocator_type* m_allocator;
-};
-
-
-template<typename T, typename Allocator>
+template<typename T, typename Allocator=std::allocator<T>>
 struct CustomVector {
     static_assert(std::is_same<typename std::remove_cv<T>::type, T>::value,
                   "vector must have a non-const, non-volatile value_type");
@@ -46,7 +24,6 @@ struct CustomVector {
     using size_type = std::size_t;
     using pointer = T *;
     using alloc_type = Allocator;
-    using deleter_type = deleter_t<T, Allocator>;
 
     CustomVector() : CustomVector(0) {}
 
@@ -55,8 +32,6 @@ struct CustomVector {
     explicit CustomVector(size_type n, value_type const &default_value = value_type(), alloc_type default_alloc = alloc_type())
     {
         allocator = default_alloc;
-        deleter = new deleter_type(allocator);
-        _start(nullptr, deleter);
         resize(n);
         fill(default_value);
     }
@@ -128,12 +103,12 @@ struct CustomVector {
 
     void _realloc(size_type n) {
         if (_start == nullptr) {
-            _start = std::unique_ptr<value_type, deleter_type*>(_allocate(n), deleter_type(allocator));
+            _start = _node_construct(_allocate(n));
             _finish = _start.get();
             _end_of_storage = _start.get() + n;
             return;
         }
-        auto new_ptr = std::unique_ptr<value_type, deleter_type*>(_allocate(n), deleter_type(allocator));
+        auto new_ptr = _node_construct(_allocate(n));
         if (size() > 0)
             std::memcpy((void *) new_ptr.get(), (void *) _start.get(), std::min(n, size()) * sizeof(value_type));
         size_type prev_size = size();
@@ -148,6 +123,15 @@ struct CustomVector {
             allocator.construct(ptr + i);
         }
         return ptr;
+    }
+
+    std::shared_ptr<value_type> _node_construct(pointer p){
+        auto deleter = [this](pointer p){
+            auto size = this->capacity();
+            this->allocator.destroy(p);
+            this->allocator.deallocate(p, size);
+        };
+        return std::shared_ptr<value_type> (p, deleter);
     }
 
     static size_type _calculate_new_capacity(size_type n) {
@@ -294,8 +278,7 @@ struct CustomVector {
         allocator.destroy(_finish);
     }
 
-    std::unique_ptr<value_type, deleter_type*> _start;
-    deleter_type *deleter;
+    std::shared_ptr<value_type> _start;
     pointer _finish, _end_of_storage;
 
     alloc_type allocator;
