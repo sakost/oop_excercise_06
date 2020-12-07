@@ -31,7 +31,7 @@ struct CustomAllocator {
                 _free_blocks.push_back(_used_blocks + i);
             }
         }
-        size_type ind = SearchFreeSpace(count);
+        size_type ind = free_space(count);
         _free_blocks.erase(std::next(_free_blocks.begin(), ind), std::next(_free_blocks.begin(), count + ind + 1));
         return _used_blocks + ind;
     }
@@ -59,7 +59,7 @@ struct CustomAllocator {
         free(_used_blocks);
     }
 
-    size_type SearchFreeSpace(size_type n)
+    size_type free_space(size_type n)
     {
         size_type total = 0;
 
