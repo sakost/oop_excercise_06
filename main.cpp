@@ -28,7 +28,7 @@ void help(std::ostream &out) {
 
 
 int main() {
-    CustomVector<Pentagon<int>, CustomAllocator<Pentagon<int>, 2>> vec;
+    CustomVector<Pentagon<int>, CustomAllocator<Pentagon<int>, 20>> vec;
 
     typename Pentagon<int>::area_type area = 0;
     int cmd;

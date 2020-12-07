@@ -2,8 +2,8 @@
 // Created by sakost on 22.11.2020.
 //
 
-#ifndef OOP_EXCERCISE_05_CUSTOM_VECTOR_H
-#define OOP_EXCERCISE_05_CUSTOM_VECTOR_H
+#ifndef OOP_EXCERCISE_06_CUSTOM_VECTOR_H
+#define OOP_EXCERCISE_06_CUSTOM_VECTOR_H
 
 #include <cstring>
 #include <memory>
@@ -285,4 +285,4 @@ struct CustomVector {
 };
 
 
-#endif //OOP_EXCERCISE_05_CUSTOM_VECTOR_H
+#endif //OOP_EXCERCISE_06_CUSTOM_VECTOR_H

@@ -2,8 +2,8 @@
 // Created by sakost on 23.11.2020.
 //
 
-#ifndef OOP_EXCERCISE_05_PENTAGON_H
-#define OOP_EXCERCISE_05_PENTAGON_H
+#ifndef OOP_EXCERCISE_06_PENTAGON_H
+#define OOP_EXCERCISE_06_PENTAGON_H
 
 
 #include <utility>
@@ -66,4 +66,4 @@ struct Pentagon {
 };
 
 
-#endif //OOP_EXCERCISE_05_PENTAGON_H
+#endif //OOP_EXCERCISE_06_PENTAGON_H
